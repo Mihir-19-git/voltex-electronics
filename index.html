@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VOLTEX — Electronics & Gadgets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #15151e;
+      --border: #222230;
+      --accent: #00e5ff;
+      --accent2: #ff3d71;
+      --accent3: #7b61ff;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --tag-bg: #1a1a28;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(0,229,255,0.5);
+    }
+
+    .nav-logo span { color: var(--text); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      gap: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar:focus-within { border-color: var(--accent); }
+
+    .search-bar input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      width: 180px;
+    }
+
+    .search-bar input::placeholder { color: var(--muted); }
+    .search-icon { color: var(--muted); font-size: 14px; }
+
+    .cart-btn {
+      position: relative;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.1s;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-btn:hover {
+      box-shadow: 0 0 20px rgba(0,229,255,0.4);
+      transform: translateY(-1px);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -6px; right: -6px;
+      background: var(--accent2);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-strip {
+      position: relative;
+      z-index: 1;
+      padding: 56px 40px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 0.9;
+      letter-spacing: 2px;
+    }
+
+    .hero-title .line1 { color: var(--text); }
+    .hero-title .line2 {
+      color: var(--accent);
+      text-shadow: 0 0 40px rgba(0,229,255,0.4);
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-sub span { color: var(--accent); }
+
+    .hero-stats { display: flex; gap: 32px; }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 36px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .filter-bar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 7px 16px;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    .sort-select {
+      margin-left: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 0;
+      min-height: calc(100vh - 200px);
+    }
+
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      padding: 28px 24px;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar-section { margin-bottom: 32px; }
+
+    .sidebar-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .price-range-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 10px;
+    }
+
+    .range-input {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .brand-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .brand-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .brand-item input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; }
+
+    .brand-item label {
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .brand-item:hover label { color: var(--text); }
+
+    .rating-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .stars { color: #ffd700; font-size: 12px; letter-spacing: 1px; }
+    .rating-count { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+    .products-area { flex: 1; padding: 28px 32px; }
+
+    .results-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .results-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .results-count span { color: var(--accent); }
+
+    .view-toggle { display: flex; gap: 4px; }
+
+    .view-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .view-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      animation: fadeUp 0.5s both;
+      position: relative;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(0,229,255,0.1);
+    }
+
+    .badge {
+      position: absolute;
+      top: 12px; left: 12px;
+      padding: 3px 9px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      z-index: 2;
+    }
+
+    .badge-new { background: var(--accent); color: #000; }
+    .badge-hot { background: var(--accent2); color: #fff; }
+    .badge-deal { background: var(--accent3); color: #fff; }
+
+    .wishlist-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(10,10,15,0.7);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      z-index: 2;
+    }
+
+    .wishlist-btn:hover { color: var(--accent2); border-color: var(--accent2); }
+    .wishlist-btn.active { color: var(--accent2); border-color: var(--accent2); background: rgba(255,61,113,0.1); }
+
+    .product-img-wrap {
+      height: 180px;
+      background: linear-gradient(135deg, #13131c, #1e1e2e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-img-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(0,229,255,0.05), transparent 70%);
+    }
+
+    .product-info { padding: 16px; }
+
+    .product-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .product-name {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .product-stars { color: #ffd700; font-size: 11px; }
+
+    .product-reviews {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .product-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--text);
+      letter-spacing: 1px;
+      line-height: 1;
+    }
+
+    .product-price .currency { font-size: 16px; color: var(--muted); }
+
+    .product-old-price {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: line-through;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .product-discount {
+      font-size: 11px;
+      color: var(--accent2);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 7px 14px;
+      border-radius: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .add-btn:hover { background: var(--accent); color: #000; }
+    .add-btn.added { background: var(--accent); color: #000; }
+
+    .toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 24px rgba(0,229,255,0.15);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { color: var(--accent); font-size: 16px; }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 40px 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-btn {
+      width: 38px; height: 38px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover, .page-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--accent);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .footer-links { display: flex; gap: 20px; }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .product-card:nth-child(1) { animation-delay: 0.05s; }
+    .product-card:nth-child(2) { animation-delay: 0.1s; }
+    .product-card:nth-child(3) { animation-delay: 0.15s; }
+    .product-card:nth-child(4) { animation-delay: 0.2s; }
+    .product-card:nth-child(5) { animation-delay: 0.25s; }
+    .product-card:nth-child(6) { animation-delay: 0.3s; }
+    .product-card:nth-child(7) { animation-delay: 0.35s; }
+    .product-card:nth-child(8) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">VOLT<span>EX</span></div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#" style="color:var(--accent)">Products</a></li>
+    <li><a href="#">Deals</a></li>
+    <li><a href="#">Support</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="search-bar">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search gadgets..." id="searchInput" oninput="filterProducts()"/>
+    </div>
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero-strip">
+  <div>
+    <div class="hero-title">
+      <div class="line1">LATEST</div>
+      <div class="line2">GADGETS</div>
+    </div>
+    <div class="hero-sub">Showing <span id="prodCount">12</span> products · Updated <span>today</span></div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Products</div></div>
+    <div class="stat"><div class="stat-num">48H</div><div class="stat-label">Delivery</div></div>
+    <div class="stat"><div class="stat-num">4.8★</div><div class="stat-label">Rating</div></div>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <span class="filter-label">Category //</span>
+  <button class="filter-btn active" onclick="setCategory('All', this)">All</button>
+  <button class="filter-btn" onclick="setCategory('Smartphones', this)">Smartphones</button>
+  <button class="filter-btn" onclick="setCategory('Laptops', this)">Laptops</button>
+  <button class="filter-btn" onclick="setCategory('Audio', this)">Audio</button>
+  <button class="filter-btn" onclick="setCategory('Wearables', this)">Wearables</button>
+  <button class="filter-btn" onclick="setCategory('Cameras', this)">Cameras</button>
+  <button class="filter-btn" onclick="setCategory('Gaming', this)">Gaming</button>
+  <select class="sort-select" onchange="sortProducts(this.value)">
+    <option value="default">Sort: Featured</option>
+    <option value="price-asc">Price: Low → High</option>
+    <option value="price-desc">Price: High → Low</option>
+    <option value="rating">Top Rated</option>
+  </select>
+</div>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">// Price Range</div>
+      <div class="price-range-display">
+        <span>₹0</span>
+        <span id="priceVal">₹2,00,000</span>
+      </div>
+      <input type="range" class="range-input" min="0" max="200000" step="1000" value="200000"
+        oninput="document.getElementById('priceVal').textContent='₹'+Number(this.value).toLocaleString('en-IN'); filterProducts()"/>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">// Brand</div>
+      <ul class="brand-list">
+        <li class="brand-item"><input type="checkbox" id="b1" onchange="filterProducts()"><label for="b1">Apple</label></li>
+        <li class="brand-item"><input type="checkbox" id="b2" onchange="filterProducts()"><label for="b2">Samsung</label></li>
+        <li class="brand-item"><input type="checkbox" id="b3" onchange="filterProducts()"><label for="b3">Sony</label></li>
+        <li class="brand-item"><input type="checkbox" id="b4" onchange="filterProducts()"><label for="b4">OnePlus</label></li>
+        <li class="brand-item"><input type="checkbox" id="b5" onchange="filterProducts()"><label for="b5">Bose</label></li>
+        <li class="brand-item"><input type="checkbox" id="b6" onchange="filterProducts()"><label for="b6">Logitech</label></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">// Rating</div>
+      <div class="rating-list">
+        <div class="rating-row"><span class="stars">★★★★★</span><span class="rating-count">(5.0)</span></div>
+        <div class="rating-row"><span class="stars">★★★★☆</span><span class="rating-count">(4.0+)</span></div>
+        <div class="rating-row"><span class="stars">★★★☆☆</span><span class="rating-count">(3.0+)</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="products-area">
+    <div class="results-bar">
+      <div class="results-count">Showing <span id="showCount">12</span> of <span>12</span> products</div>
+      <div class="view-toggle">
+        <button class="view-btn active" title="Grid">⊞</button>
+        <button class="view-btn" title="List">☰</button>
+      </div>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</div>
+
+<div class="pagination">
+  <button class="page-btn active">1</button>
+  <button class="page-btn">2</button>
+  <button class="page-btn">3</button>
+  <button class="page-btn">→</button>
+</div>
+
+<footer>
+  <div class="footer-logo">VOLTEX</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Returns</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 VOLTEX Electronics · All rights reserved</div>
+</footer>
+
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMsg">Item added to cart!</span>
+</div>
+
+<script>
+  const products = [
+    { id:1, name:"iPhone 16 Pro Max", category:"Smartphones", brand:"Apple", emoji:"📱", price:149999, oldPrice:159999, rating:4.9, reviews:2341, badge:"new" },
+    { id:2, name:"Galaxy S25 Ultra", category:"Smartphones", brand:"Samsung", emoji:"📲", price:124999, oldPrice:134999, rating:4.8, reviews:1876, badge:"hot" },
+    { id:3, name:"Sony WH-1000XM6", category:"Audio", brand:"Sony", emoji:"🎧", price:34999, oldPrice:39999, rating:4.9, reviews:3102, badge:"deal" },
+    { id:4, name:"MacBook Pro M4", category:"Laptops", brand:"Apple", emoji:"💻", price:199999, oldPrice:null, rating:4.9, reviews:987, badge:"new" },
+    { id:5, name:"Apple Watch Ultra 3", category:"Wearables", brand:"Apple", emoji:"⌚", price:89999, oldPrice:94999, rating:4.7, reviews:654, badge:null },
+    { id:6, name:"OnePlus 13", category:"Smartphones", brand:"OnePlus", emoji:"📱", price:69999, oldPrice:74999, rating:4.6, reviews:1432, badge:"deal" },
+    { id:7, name:"Sony A7 V Camera", category:"Cameras", brand:"Sony", emoji:"📷", price:249999, oldPrice:null, rating:4.8, reviews:312, badge:"new" },
+    { id:8, name:"Bose QuietComfort 45", category:"Audio", brand:"Bose", emoji:"🎵", price:29999, oldPrice:34999, rating:4.7, reviews:2210, badge:null },
+    { id:9, name:"PS5 Slim", category:"Gaming", brand:"Sony", emoji:"🎮", price:49999, oldPrice:54999, rating:4.9, reviews:5432, badge:"hot" },
+    { id:10, name:"Logitech MX Master 4", category:"Gaming", brand:"Logitech", emoji:"🖱️", price:9999, oldPrice:11999, rating:4.8, reviews:3214, badge:"deal" },
+    { id:11, name:"Samsung Galaxy Tab S10", category:"Laptops", brand:"Samsung", emoji:"📟", price:89999, oldPrice:99999, rating:4.6, reviews:876, badge:null },
+    { id:12, name:"Galaxy Watch 7", category:"Wearables", brand:"Samsung", emoji:"⌚", price:34999, oldPrice:39999, rating:4.5, reviews:1123, badge:null },
+  ];
+
+  let cart = [];
+  let wishlist = new Set();
+  let activeCategory = 'All';
+
+  function renderStars(rating) {
+    const full = Math.floor(rating);
+    const half = rating % 1 >= 0.5;
+    return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - (half?1:0));
+  }
+
+  function getDiscount(price, old) {
+    if (!old) return null;
+    return Math.round((1 - price/old) * 100);
+  }
+
+  function createCard(p) {
+    const disc = getDiscount(p.price, p.oldPrice);
+    const badgeHTML = p.badge ? `<span class="badge badge-${p.badge}">${p.badge}</span>` : '';
+    return `
+      <div class="product-card" id="card-${p.id}">
+        ${badgeHTML}
+        <button class="wishlist-btn ${wishlist.has(p.id)?'active':''}" onclick="toggleWish(${p.id}, this)">♥</button>
+        <div class="product-img-wrap">${p.emoji}</div>
+        <div class="product-info">
+          <div class="product-category">${p.category}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-rating">
+            <span class="product-stars">${renderStars(p.rating)}</span>
+            <span class="product-reviews">(${p.reviews.toLocaleString()})</span>
+          </div>
+          <div class="product-price-row">
+            <div>
+              <div class="product-price"><span class="currency">₹</span>${(p.price/1000).toFixed(0)}K</div>
+              ${p.oldPrice ? `<div class="product-old-price">₹${p.oldPrice.toLocaleString()} ${disc?`<span class="product-discount">-${disc}%</span>`:''}</div>` : ''}
+            </div>
+            <button class="add-btn ${cart.includes(p.id)?'added':''}" onclick="addToCart(${p.id}, this)">
+              ${cart.includes(p.id) ? '✓ Added' : '+ Add'}
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderProducts(list) {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = list.map(p => createCard(p)).join('');
+    document.getElementById('showCount').textContent = list.length;
+    document.getElementById('prodCount').textContent = list.length;
+  }
+
+  function filterProducts() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const maxPrice = parseInt(document.querySelector('.range-input').value);
+    const checkedBrands = [...document.querySelectorAll('.brand-list input:checked')].map(i => i.nextElementSibling.textContent);
+
+    let filtered = products.filter(p => {
+      const matchCat = activeCategory === 'All' || p.category === activeCategory;
+      const matchSearch = p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
+      const matchPrice = p.price <= maxPrice;
+      const matchBrand = checkedBrands.length === 0 || checkedBrands.includes(p.brand);
+      return matchCat && matchSearch && matchPrice && matchBrand;
+    });
+
+    renderProducts(filtered);
+  }
+
+  function setCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterProducts();
+  }
+
+  function sortProducts(val) {
+    let list = [...products];
+    if (val === 'price-asc') list.sort((a,b) => a.price - b.price);
+    else if (val === 'price-desc') list.sort((a,b) => b.price - a.price);
+    else if (val === 'rating') list.sort((a,b) => b.rating - a.rating);
+    renderProducts(list);
+  }
+
+  function addToCart(id, btn) {
+    if (!cart.includes(id)) {
+      cart.push(id);
+      btn.textContent = '✓ Added';
+      btn.classList.add('added');
+      document.getElementById('cartCount').textContent = cart.length;
+      showToast(products.find(p=>p.id===id).name + ' added to cart!');
+    }
+  }
+
+  function toggleWish(id, btn) {
+    if (wishlist.has(id)) {
+      wishlist.delete(id);
+      btn.classList.remove('active');
+      showToast('Removed from wishlist');
+    } else {
+      wishlist.add(id);
+      btn.classList.add('active');
+      showToast('Added to wishlist ♥');
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function openCart() {
+    showToast(`Cart has ${cart.length} item(s)`);
+  }
+
+  renderProducts(products);
+</script>
+</body>
+</html>
